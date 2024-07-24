@@ -27,7 +27,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.scoutplayer.R
 import com.example.scoutplayer.ui.theme.ScoutPlayerTheme
@@ -47,11 +46,11 @@ class PlayerActivity : ComponentActivity() {
         R.raw.jazz_de_luxe,
         R.raw.la_paloma,
         R.raw.m_appari_martha,
-        R.raw.mary_had_a_little_lamb,
         R.raw.minuet_in_g_flat_major,
         R.raw.moonlight,
         R.raw.moonlight_bay,
-        R.raw.narowode_melodye
+        R.raw.narowode_melodye,
+        R.raw.mary_had_a_little_lamb
     )
 
     //Set method is built to facilitate easy movement of the value in the positive or negative direction.
@@ -69,6 +68,9 @@ class PlayerActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //Ensure the first song is displayed before we hit any buttons
+        viewModel.updateFieldsFromMetadata(resources.openRawResourceFd(songList[songIndex]))
 
         setContent {
             ScoutPlayerTheme {
@@ -129,16 +131,13 @@ class PlayerActivity : ComponentActivity() {
 
     @Composable
     fun ControlPanel() {
-        //This modifier is distributed to all buttons to allow for uniform changes
-        val generalButtonModifier = Modifier.padding(6.dp)
         Column {
             Row {
                 //Shuffle Button
                 PlayerButton(
                     label = stringResource(id = R.string.shuffle_button_label),
                     description = stringResource(id = R.string.shuffle_button_content_description),
-                    imageRes = R.drawable.baseline_shuffle_36,
-                    modifier = generalButtonModifier
+                    imageRes = R.drawable.baseline_shuffle_36
                 ) {
                     isShuffling = !isShuffling
                     Toast.makeText(
@@ -151,8 +150,7 @@ class PlayerActivity : ComponentActivity() {
                 PlayerButton(
                     label = stringResource(id = R.string.repeat_all_button_label),
                     description = stringResource(id = R.string.repeat_all_button_content_description),
-                    imageRes = R.drawable.baseline_repeat_36,
-                    modifier = generalButtonModifier
+                    imageRes = R.drawable.baseline_repeat_36
                 ) {
                     isRepeatingList = !isRepeatingList
                     Toast.makeText(
@@ -165,8 +163,7 @@ class PlayerActivity : ComponentActivity() {
                 PlayerButton(
                     label = stringResource(id = R.string.repeat_one_button_label),
                     description = stringResource(id = R.string.repeat_one_button_content_description),
-                    imageRes = R.drawable.baseline_repeat_one_36,
-                    modifier = generalButtonModifier
+                    imageRes = R.drawable.baseline_repeat_one_36
                 ) {
                     isRepeatingSong = !isRepeatingSong
                     Toast.makeText(
@@ -182,9 +179,10 @@ class PlayerActivity : ComponentActivity() {
                 PlayerButton(
                     label = stringResource(id = R.string.previous_button_label),
                     description = stringResource(id = R.string.previous_button_content_description),
-                    imageRes = R.drawable.outline_skip_previous_36,
-                    modifier = generalButtonModifier
+                    imageRes = R.drawable.outline_skip_previous_36
                 ) {
+                    //Turn off single-track looping
+                    isRepeatingSong = false
                     /*
                     This is in an odd state, as the previous function for shuffle or repeat
                     scenarios isn't precisely clear. Typically I'd ask product about this.
@@ -193,14 +191,16 @@ class PlayerActivity : ComponentActivity() {
                     Additionally, while we could try to back up to the last song we had on shuffle,
                     we'd need to make a call on where to cutoff the backup function.
                      */
-                    changeSong(if (isShuffling) randomNewSongIndex() else songIndex - 1)
+                    changeSong(
+                        if (isShuffling) randomNewSongIndex() else songIndex - 1,
+                        mediaPlayer?.isPlaying == true
+                    )
                 }
                 //Play Button
                 PlayerButton(
                     label = stringResource(id = R.string.play_button_label),
                     description = stringResource(id = R.string.play_button_content_description),
-                    imageRes = R.drawable.outline_play_arrow_36,
-                    modifier = generalButtonModifier
+                    imageRes = R.drawable.outline_play_arrow_36
                 ) {
                     if (mediaPlayer?.isPlaying == true) {
                         //Pause music
@@ -218,9 +218,10 @@ class PlayerActivity : ComponentActivity() {
                 PlayerButton(
                     label = stringResource(id = R.string.next_button_label),
                     description = stringResource(id = R.string.next_button_content_description),
-                    imageRes = R.drawable.outline_skip_next_36,
-                    modifier = generalButtonModifier
+                    imageRes = R.drawable.outline_skip_next_36
                 ) {
+                    //Turn off single-track looping
+                    isRepeatingSong = false
                     /*
                         How this should interact with "repeat all" could go either way I feel.
                         Personally, my main playlist use-case, YouTube, loops you back if you have
@@ -228,7 +229,9 @@ class PlayerActivity : ComponentActivity() {
                         video. I've opted for my personal preference, as if I just wanted to stop
                         the music I'd pause it.
                      */
-                    changeSong(if (isShuffling) randomNewSongIndex() else songIndex + 1)
+                    changeSong(if (isShuffling) randomNewSongIndex() else songIndex + 1,
+                        mediaPlayer?.isPlaying == true
+                    )
                 }
             }
         }
