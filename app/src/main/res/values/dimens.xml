@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="border_thickness">2dp</dimen>
+    <dimen name="button_size">84dp</dimen>
+    <dimen name="button_padding">6dp</dimen>
+    <dimen name="label_padding">8dp</dimen>
+</resources>

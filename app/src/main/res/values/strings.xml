@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">ScoutPlayer</string>
+
+    <!--Labels-->
+    <string name="play_button_label">Play</string>
+    <string name="next_button_label">Next</string>
+    <string name="previous_button_label">Previous</string>
+    <string name="shuffle_button_label">Shuffle</string>
+    <string name="repeat_all_button_label">Repeat All</string>
+    <string name="repeat_one_button_label">Repeat One</string>
+
+    <!--Descriptors-->
+    <string name="play_button_content_description">Play button</string>
+    <string name="next_button_content_description">Next button</string>
+    <string name="previous_button_content_description">Previous button</string>
+    <string name="shuffle_button_content_description">Shuffle button</string>
+    <string name="repeat_all_button_content_description">Repeat all button</string>
+    <string name="repeat_one_button_content_description">Repeat one button</string>
+
+    <!--Toasts-->
+    <string name="shuffle_toggle_on_toast">Tracks will be shuffled</string>
+    <string name="shuffle_toggle_off_toast">Tracks will no longer be shuffled</string>
+    <string name="repeat_all_toggle_on_toast">Track list will now repeat</string>
+    <string name="repeat_all_toggle_off_toast">Track list will no longer repeat</string>
+    <string name="repeat_song_toggle_on_toast">This song will now repeat</string>
+    <string name="repeat_song_toggle_off_toast">This song will no longer repeat</string>
+
+</resources>
